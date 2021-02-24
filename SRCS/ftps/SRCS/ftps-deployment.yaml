@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ftps
+  labels:
+    app: ftps
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ftps
+  template:
+    metadata:
+      labels:
+        app: ftps
+    spec:
+      containers:
+        - name: ftps-local
+          image: ftps-local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 21
+            - containerPort: 31110
+            - containerPort: 31111
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /files/healthy.sh
+            initialDelaySeconds: 5
+            periodSeconds : 10

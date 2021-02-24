@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      containers:
+        - name: wordpress-local
+          image: wordpress-local
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 5050
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - /files/healthy.sh
+            initialDelaySeconds: 5
+            periodSeconds : 10
