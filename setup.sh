@@ -7,7 +7,7 @@ echo "Deleting minikube..."
 
 echo "Starting minikube..."
     #minikube start --driver=virtualbox --memory='3072'
-    minikube start --vm-driver=docker --memory=3000mb
+    minikube start --vm-driver=docker --memory=3072mb
     minikube dashboard &
 
 echo "Install MetalLB..."
