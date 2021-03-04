@@ -1,7 +1,7 @@
   
 <?php
 
-$cfg['blowfish_secret'] = '4i<ZTz=q;WeNq7O}Mwf</M[(PCKLr&OIFnfGWu+Sr20NmIYxjWK)N?plMRY';
+$cfg['blowfish_secret'] = '0A}]=F0U6]LrtxGOqZHJ=VX0O{Kc=XnO';
 
 /**
  * List of env variables

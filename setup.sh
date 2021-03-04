@@ -1,8 +1,4 @@
 #!/bin/sh
-########################################################################################
-#            This script setup minikube, builds Docker images, and create pods         #
-########################################################################################
-
 # Remove the old SSH certificate in the IMAC
 # ssh-keygen -R 192.168.99.103
 
@@ -10,7 +6,8 @@ echo "Deleting minikube..."
     minikube delete
 
 echo "Starting minikube..."
-    minikube start --driver=virtualbox --memory='3072'
+    #minikube start --driver=virtualbox --memory='3072'
+    minikube start --vm-driver=docker --memory=3000mb
     minikube dashboard &
 
 echo "Install MetalLB..."
@@ -21,7 +18,8 @@ echo "Install MetalLB..."
     kubectl apply -f ./srcs/yamls/metallb.yaml
 
 echo "Building images..."
-    eval $(minikube docker-env) # https://stackoverflow.com/questions/52310599/what-does-minikube-docker-env-mean
+    #eval $(minikube docker-env) # https://stackoverflow.com/questions/52310599/what-does-minikube-docker-env-mean
+    eval $(minikube -p minikube docker-env --shell=bash)
     docker build -t nginx_service ./srcs/nginx
     docker build -t mysql_service ./srcs/mysql
     docker build -t wordpress_service ./srcs/wordpress
