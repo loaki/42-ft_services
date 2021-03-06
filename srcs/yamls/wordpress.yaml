@@ -36,7 +36,7 @@ spec:
     spec:
       containers:
       - name: wordpress
-        image: wordpress_service
+        image: wordpress_image
         imagePullPolicy: Never
         ports:
         - name: wp

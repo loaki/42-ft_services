@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: nginx
-        image: nginx_service
+        image: nginx_image
         imagePullPolicy: Never
         ports:
         - name: http

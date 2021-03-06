@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
       - name: ftps
-        image: ftps_service
+        image: ftps_image
         imagePullPolicy: Never
         ports:
         - name: ftps

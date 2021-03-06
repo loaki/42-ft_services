@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql_service
+        image: mysql_image
         imagePullPolicy: Never
         ports:
         - name: my
@@ -68,4 +68,4 @@ spec:
   - ReadWriteOnce
   resources:
     requests:
-      storage: 20Gi
+      storage: 10Gi
