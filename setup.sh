@@ -18,7 +18,7 @@
 # Secret
 #########################################################################################################################
 kubectl create secret generic host-ip --from-literal=HOST_IP="$(ipconfig getifaddr en1)"
-kubectl create secret generic account --from-literal=USER="ykoh" --from-literal=PASSWORD="ykoh"
+kubectl create secret generic account --from-literal=USER="jfeuilla" --from-literal=PASSWORD="jfeuilla"
 #########################################################################################################################
 
 
