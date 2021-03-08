@@ -1,100 +1,174 @@
-#!/bin/sh
-# Remove the old SSH certificate in the IMAC
-# ssh-keygen -R 192.168.99.103
+# #########################################################################################################################
+# # Delete
+# #########################################################################################################################
+# # Delete unused resources
+# docker system prune -a
 
-services_start=`date +%s`
-rm -f last.log
-printf "##########################################\n\
-                Minikube\n\
-##########################################\n" >> last.log
-printf "\e[93mStarting minikube...\e[0m\r"
-start=`date +%s`
-minikube delete >> last.log
-minikube start --driver=virtualbox --no-vtx-check --memory='3072' >> last.log
-end=`date +%s`
-runtime=$((end-start))
-printf "\e[K\e[92mStarting minikube DONE (in ${runtime}s)\e[0m\n"
+# # Delete all containers
+# docker stop $(docker ps -a -q)
+# docker rm $(docker ps -a -q)
 
-printf "##########################################\n\
-                MetalLB\n\
-##########################################\n" >> last.log
-printf "\e[93mInstalling MetalLB...\e[0m\r"
-    start=`date +%s`
-    minikube addons enable metallb >> last.log
-    # The memberlist secret contains the secretkey to encrypt the communication between speakers for the fast dead node detection.
-    kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)" >> last.log
-    # Deploy MetalLB to the cluster
-    kubectl apply -f ./srcs/yamls/metallb.yaml >> last.log
-    end=`date +%s`
-    runtime=$((end-start))
-    printf "\e[K\e[92mInstalling MetalLB DONE (in ${runtime}s)\e[0m\n"
+# # Delete images
+# docker rmi $(docker images -q) 
+# #########################################################################################################################
 
-function build_spec() 
-{
-    printf "##########################################\n\
-                ${1}\n\
-##########################################\n" >> last.log
-	printf "\e[93mSTART BUILDING ${1}...\e[0m\r"
-	start=`date +%s`
-	docker build -t $1_image ./srcs/$1 >> last.log
-	end=`date +%s`
-	runtime=$((end-start))
-	printf "\e[K\e[92m${1} DONE (in ${runtime}s)\e[0m\n"
-}
 
-eval $(minikube -p minikube docker-env --shell=bash)
-build_spec influxdb
-build_spec mysql
-build_spec nginx
-build_spec phpmyadmin
-printf "\e[36mPlease wait 10 sec...\e[0m\r"
+
+#########################################################################################################################
+# Secret
+#########################################################################################################################
+kubectl create secret generic host-ip --from-literal=HOST_IP="$(ipconfig getifaddr en0)"
+kubectl create secret generic account --from-literal=USER="jfeuilla" --from-literal=PASSWORD="jfeuilla"
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# MetalLB
+#########################################################################################################################
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.5/manifests/namespace.yaml
+kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.9.5/manifests/metallb.yaml
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+export ADDRESSES=`ipconfig getifaddr en0`-`ipconfig getifaddr en0`
+sed -i "" "s/ADDRESSES/$ADDRESSES/" srcs/MetalLB/config.yaml
+kubectl apply -f srcs/MetalLB/config.yaml
+sed -i "" "s/$ADDRESSES/ADDRESSES/" srcs/MetalLB/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# MySQL
+#########################################################################################################################
+# docker build -t mysql srcs/MySQL && docker run -p 3306:3306 -it mysql
+# kubectl delete -f srcs/MySQL/config.yaml
+docker build -t mysql srcs/MySQL
+kubectl apply -f srcs/MySQL/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# PhpMyAdmin
+#########################################################################################################################
+# docker build -t phpmyadmin srcs/PhpMyAdmin && docker run -p 5000:5000 -it phpmyadmin
+# kubectl delete -f srcs/PhpMyAdmin/config.yaml
+docker build -t phpmyadmin srcs/PhpMyAdmin
+kubectl apply -f srcs/PhpMyAdmin/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# WordPress
+#########################################################################################################################
+# docker build -t wordpress srcs/WordPress && docker run -p 5050:5050 -it wordpress
+# kubectl delete -f srcs/WordPress/config.yaml
+docker build -t wordpress srcs/WordPress
+kubectl apply -f srcs/WordPress/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# Nginx
+#########################################################################################################################
+# docker build -t nginx srcs/Nginx && docker run -p 22:22 -it nginx
+# kubectl delete -f srcs/Nginx/config.yaml
+docker build -t nginx srcs/Nginx
+kubectl apply -f srcs/Nginx/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# influxDB
+#########################################################################################################################
+# docker build -t influxdb srcs/influxDB && docker run -p 8086:8086 -it influxdb
+# kubectl delete -f srcs/influxDB/config.yaml
+docker build -t influxdb srcs/influxDB
+kubectl apply -f srcs/influxDB/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# telegraf
+#########################################################################################################################
+# docker build -t telegraf srcs/telegraf && docker run -it telegraf
+# kubectl delete -f srcs/telegraf/config.yaml
+docker build -t telegraf srcs/telegraf
+kubectl apply -f srcs/telegraf/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# Grafana
+#########################################################################################################################
+# docker build -t grafana srcs/Grafana && docker run -p 3000:3000 -it grafana
+# kubectl delete -f srcs/Grafana/config.yaml
+docker build -t grafana srcs/Grafana
+kubectl apply -f srcs/Grafana/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# FTPS
+#########################################################################################################################
+# kubectl delete -f srcs/FTPS/config.yaml
+docker build -t ftps srcs/FTPS
+export HOST_IP=`ipconfig getifaddr en0`
+sed -i "" "s/HOST_IP/$HOST_IP/" srcs/FTPS/config.yaml
+kubectl apply -f srcs/FTPS/config.yaml
+sed -i "" "s/$HOST_IP/HOST_IP/" srcs/FTPS/config.yaml
+#########################################################################################################################
+
+
+
+#########################################################################################################################
+# Dashboard
+#########################################################################################################################
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+kubectl apply -f srcs/metrics-server.yaml
+
+# Creating a Service Account
+cat <<EOF | kubectl apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+# Creating a ClusterRoleBinding
+cat <<EOF | kubectl apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+# Commandline proxy
+kill -9 $(lsof -ti :8001)
+kubectl proxy &
+
+echo "k8s dashboard will be appear in 10s."
 sleep 10
-build_spec wordpress
-build_spec ftps
-build_spec grafana
+# Getting a Bearer Token
+echo;echo "Type the Bearer Token bellowing to login to dashboard.";echo
+kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+echo
 
-printf "\e[93mCreating pods and services...\e[0m\r"
-    start=`date +%s`
-    kubectl apply -f ./srcs/yamls/nginx.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/mysql.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/wordpress.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/phpmyadmin.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/ftps.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/influxdb.yaml >> last.log
-    kubectl apply -f ./srcs/yamls/grafana.yaml >> last.log
-    end=`date +%s`
-    runtime=$((end-start))
-    printf "\e[K\e[92mCreating pods and services DONE (in ${runtime}s)\e[0m\n"
-
-end=`date +%s`
-runtime=$((end-services_start))
-printf "\e[36mServices DONE (in ${runtime}s)\e[0m\n"
-minikube dashboard &
-
-#printf "\e[93mBuilding images...\e[0m\r"
-#    start=`date +%s`
-#    #eval $(minikube docker-env) # https://stackoverflow.com/questions/52310599/what-does-minikube-docker-env-mean
-#    eval $(minikube -p minikube docker-env --shell=bash)
-#    docker build -t nginx_service ./srcs/nginx >> last.log
-#    docker build -t mysql_service ./srcs/mysql >> last.log
-#    docker build -t wordpress_service ./srcs/wordpress >> last.log
-#    docker build -t phpmyadmin_service ./srcs/phpmyadmin >> last.log
-#    docker build -t ftps_service ./srcs/ftps >> last.log
-#    docker build -t influxdb_service ./srcs/influxdb >> last.log
-#    docker build -t grafana_service ./srcs/grafana >> last.log
-#    end=`date +%s`
-#    runtime=$((end-start))
-#    printf "\e[K\e[92mBuilding images DONE (in ${runtime}s)\e[0m\n"
-
-#printf "\e[93mCreating pods and services...\e[0m\r"
-#    start=`date +%s`
-#    kubectl apply -f ./srcs/yamls/nginx.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/mysql.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/wordpress.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/phpmyadmin.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/ftps.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/influxdb.yaml >> last.log
-#    kubectl apply -f ./srcs/yamls/grafana.yaml >> last.log
-#    end=`date +%s`
-#    runtime=$((end-start))
-#    printf "\e[K\e[92mCreating pods and services DONE (in ${runtime}s)\e[0m\n"
+# Dashboard URL
+open "http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/"
+#########################################################################################################################
