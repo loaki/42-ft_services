@@ -5,7 +5,7 @@ openssl req \
 -x509 -nodes -days 365 -newkey rsa:2048 \
 -keyout /etc/ssl/private/services.key \
 -out /etc/ssl/certs/services.crt \
--subj "/C=FR/ST=PARIS/O=42/CN=$HOST_IP"
+-subj "/C=KR/ST=PARIS/O=42PARIS/CN=$HOST_IP"
 
 # ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa
 # ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa

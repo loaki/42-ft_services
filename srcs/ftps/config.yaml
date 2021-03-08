@@ -16,7 +16,7 @@ data:
     port_enable=NO
     pasv_enable=YES
     seccomp_sandbox=NO
-    pasv_address=HOST_IP
+    pasv_address=
     pasv_min_port=20000
     pasv_max_port=20003
     local_umask=022

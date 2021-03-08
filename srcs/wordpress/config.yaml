@@ -59,10 +59,10 @@ data:
     define( 'DB_NAME', 'wordpress' );
 
     /** MySQL database username */
-    define( 'DB_USER', 'jfeuilla' );
+    define( 'DB_USER', 'loaki' );
 
     /** MySQL database password */
-    define( 'DB_PASSWORD', 'jfeuilla' );
+    define( 'DB_PASSWORD', 'loaki' );
 
     /** MySQL hostname */
     define( 'DB_HOST', 'mysql' );
@@ -82,14 +82,15 @@ data:
     *
     * @since 2.6.0
     */
-    define('AUTH_KEY',         '+t*T)y2]J-#ZI14i%*BUWB(R@S#(4F+&U/lCg0(s9XnF)CC>:(h+L6P?-j_{iLU=');
-    define('SECURE_AUTH_KEY',  'j-N+eO6Tae-J|KlaRvEgu7K&^fPxEd<Q-b-6hDPv=BBFk+l+bf:u#/0s;WE3/tG*');
-    define('LOGGED_IN_KEY',    '{~N/i+2&YhbCO>ARkYq2j1!!{<&4Rb/h8|Rz7Z!`__{#HQ5(S#[q_/IG[,K:#RH0');
-    define('NONCE_KEY',        'oASpN]/@6, Ce&T_,H4i:y?8lpqOvKMi|N@@m`9qWziLzb&^Zf.wROn6V3AbxC7A');
-    define('AUTH_SALT',        'pF@lP%0q/MM}>W]|;P%5?G9=< QA)wPBkO%{e!49dgQH)WfK1+yD(+-whd^ICl0I');
-    define('SECURE_AUTH_SALT', '?4QEJP/1|+&V<z<huQaZp[!}-,$HJ,}1E+@S)Wa0>Awa^SbXJ?F4{v-,+wD%wb[J');
-    define('LOGGED_IN_SALT',   '+pB/cce?t:/|B:Be8,X1QKxQ?->Q+W~oUu0UZkea63ep.JbzMtn@@,>Z=z>wd*IY');
-    define('NONCE_SALT',       'AG;danuX|1;$Axh!13(`{Q.HF@KSb6e@G:!S6X(_exy_~UOgwb$K1|lhi|Yk9X)W');
+    define('AUTH_KEY',         '15|F!j~o{?@IF`KcpWTmRlS`Z.-[K{|5%8{Z-%d^dI=wnGt0A6BW31|+T!;5=,Y/');
+    define('SECURE_AUTH_KEY',  'cKLxdKdi,;<VPZ>vPUo-}pmC+lY#rR+>&9X~?2p-wpLsiCX|+lUYqpvFQ=_0$o)F');
+    define('LOGGED_IN_KEY',    '!bOcxweTs+#y:aU(NCSN *iCWf=hpV9_deHBo<6 siSaNd}[8l#B?71|Z13}QR7W');
+    define('NONCE_KEY',        'e%(kF-U=<QHHc= u_/w.G:+jo-? 6ZW)x4+I^wD9$}!<[KE!=o<<N5lL,$[%|sD+');
+    define('AUTH_SALT',        'CJCV7JzNpR.7Kmi??(|w`hLl!`6DSSNFJ!G}my+,cv,m{JQIXo5?K/T ~1Ha2!JB');
+    define('SECURE_AUTH_SALT', '(VBK>-tz+80FdxVTD|+eOKSTVDZ4*%(>M?6/o*;fp#5f*qx~9R6E6U@TNEH}7`Jl');
+    define('LOGGED_IN_SALT',   '`1j.o_4u9lfI-DeAq|,RjP7Sl)yB+.P-FKT;V:_fh*pZLs&yj>*,|gEGB:Ddta-{');
+    define('NONCE_SALT',       'iT;u:4.Kv>G+{KL>l(|O>tn}[f;V2XxamYf_(6JW}rC!)8THEbpF5$.4!F8R<%az');
+
     /**#@-*/
 
     /**
